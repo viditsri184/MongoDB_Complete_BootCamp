@@ -4187,4 +4187,252 @@ shop> db.products.aggregate([{$project: {price: 1, discountPrice: {$multiply: ['
   }
 ]
 Type "it" for more
+
+Microsoft Windows [Version 10.0.22631.4169]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\VIDIT SRIVASTAVA>mongosh
+Current Mongosh Log ID: 66f1232c11e8b135d8a0bba4
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.1
+Using MongoDB:          7.0.2
+Using Mongosh:          2.0.1
+mongosh 2.3.1 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-09-23T07:11:42.880+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> use shop
+switched to db shop
+shop> show dbs
+admin          40.00 KiB
+config         60.00 KiB
+contactDance   88.00 KiB
+employees     200.00 KiB
+local          88.00 KiB
+shop            1.27 MiB
+students       72.00 KiB
+shop> db.products.aggregate([{$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$push: '$color'}}}])
+[ { _id: 1299, allColors: [] }, { _id: 1999, allColors: [] } ]
+shop> db.products.aggregate([{$match : {price : {$gt : 1250}}}, {$group: {_id: '$price', allColors: {$push: '$color'}}}])
+[ { _id: 1299, allColors: [] }, { _id: 1999, allColors: [] } ]
+shop> db.products.aggregate([{$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$push: '$colors'}}}])
+[
+  { _id: 1299, allColors: [ [ '#333333', '#cccccc', '#00ff00' ] ] },
+  { _id: 1999, allColors: [ [ '#000000', '#cc6600', '#663300' ] ] }
+]
+shop> db.products.aggregate([{$unwind: '$colors'}, {$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$push: '$colors'}}}])
+[
+  { _id: 1299, allColors: [ '#333333', '#cccccc', '#00ff00' ] },
+  { _id: 1999, allColors: [ '#000000', '#cc6600', '#663300' ] }
+]
+shop> db.products.aggregate([{$unwind: '$colors'}, {$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$addToSet: '$colors'}}}])
+[
+  { _id: 1299, allColors: [ '#cccccc', '#333333', '#00ff00' ] },
+  { _id: 1999, allColors: [ '#000000', '#cc6600', '#663300' ] }
+]
+shop> db.products.aggregate([{$unwind: '$colors'}, {$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$addToSet: '$colors'}}}, {$project: {_id:1, colors: 1, colorLength: {$size: '$colors'}}}])
+MongoServerError: PlanExecutor error during aggregation :: caused by :: The argument to $size must be an array, but was of type: missing
+shop> db.products.aggregate([{$unwind: '$colors'}, {$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$addToSet: '$colors'}}}, {$project: {_id:1, colors: 1, colorLength: {$size: '$allColors'}}}])
+[ { _id: 1299, colorLength: 3 }, { _id: 1999, colorLength: 3 } ]
+shop> db.products.aggregate([{$unwind: '$colors'}, {$match : {price : {$gt : 1200}}}, {$group: {_id: '$price', allColors: {$addToSet: '$colors'}}}, {$project: {_id:1, colors: 1, colorLength: {$size: '$allColors'}}}, {$limit: 1}])
+[ { _id: 1999, colorLength: 3 } ]
+shop> db.col.insertMany({"_id":{"$oid":"64c23350e32f4a51b19b9201"},"name":"Document 1","values":[10,20,30,40,50]})
+MongoInvalidArgumentError: Argument "docs" must be an array of documents
+shop> {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]}
+... {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]}
+Uncaught:
+SyntaxError: Missing semicolon. (1:6)
+
+> 1 | {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]}
+    |       ^
+  2 | {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]}
+  3 |
+
+shop> {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]}
+... {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]}
+Uncaught:
+SyntaxError: Missing semicolon. (1:6)
+
+> 1 | {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]}
+    |       ^
+  2 | {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]}
+  3 |
+
+shop> db.cols.insertMany({
+... {"_id":{"$oid":"64c23350e32f4a51b19b9201"},"name":"Document 1","values":[10,20,30,40,50]},
+Uncaught:
+SyntaxError: Unexpected token (2:0)
+
+  1 | db.cols.insertMany({
+> 2 | {"_id":{"$oid":"64c23350e32f4a51b19b9201"},"name":"Document 1","values":[10,20,30,40,50]},
+    | ^
+  3 |
+
+shop> {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]},
+... })
+Uncaught:
+SyntaxError: Missing semicolon. (1:6)
+
+> 1 | {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]},
+    |       ^
+  2 | {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]},
+  3 | {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]},
+  4 | {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]},
+
+shop> db.cols.insertMany({
+... {"_id":{"$oid":"64c23350e32f4a51b19b9201"},"name":"Document 1","values":[10,20,30,40,50]},
+Uncaught:
+SyntaxError: Unexpected token (2:0)
+
+  1 | db.cols.insertMany({
+> 2 | {"_id":{"$oid":"64c23350e32f4a51b19b9201"},"name":"Document 1","values":[10,20,30,40,50]},
+    | ^
+  3 |
+
+shop> {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]},
+... })
+Uncaught:
+SyntaxError: Missing semicolon. (1:6)
+
+> 1 | {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]},
+    |       ^
+  2 | {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]},
+  3 | {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]},
+  4 | {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]},
+
+shop>
+
+shop> db.cols.insertMany([
+... {"_id":{"$oid":"64c23350e32f4a51b19b9201"},"name":"Document 1","values":[10,20,30,40,50]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9202"},"name":"Document 2","values":[15,25,35,45,55]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9203"},"name":"Document 3","values":[5,15,25,35,45]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9204"},"name":"Document 4","values":[30,40,50,60,70]},
+... {"_id":{"$oid":"64c23350e32f4a51b19b9205"},"name":"Document 5","values":[25,35,45,55,65]},
+... ])
+Uncaught:
+MongoBulkWriteError: _id fields may not contain '$'-prefixed fields: $oid is not valid for storage.
+Result: BulkWriteResult {
+  insertedCount: 0,
+  matchedCount: 0,
+  modifiedCount: 0,
+  deletedCount: 0,
+  upsertedCount: 0,
+  upsertedIds: {},
+  insertedIds: {
+    '0': { '$oid': '64c23350e32f4a51b19b9201' },
+    '1': { '$oid': '64c23350e32f4a51b19b9202' },
+    '2': { '$oid': '64c23350e32f4a51b19b9203' },
+    '3': { '$oid': '64c23350e32f4a51b19b9204' },
+    '4': { '$oid': '64c23350e32f4a51b19b9205' }
+  }
+}
+Write Errors: [
+  WriteError {
+    err: {
+      index: 0,
+      code: 52,
+      errmsg: "_id fields may not contain '$'-prefixed fields: $oid is not valid for storage.",
+      errInfo: undefined,
+      op: {
+        _id: { '$oid': '64c23350e32f4a51b19b9201' },
+        name: 'Document 1',
+        values: [ 10, 20, 30, 40, 50 ]
+      }
+    }
+  }
+]
+shop> db.cols.insertMany([
+... {"_id":"64c23350e32f4a51b19b9201","name":"Document 1","values":[10,20,30,40,50]},
+... {"_id":"64c23350e32f4a51b19b9202","name":"Document 2","values":[15,25,35,45,55]},
+... {"_id":"64c23350e32f4a51b19b9203","name":"Document 3","values":[5,15,25,35,45]},
+... {"_id":"64c23350e32f4a51b19b9204","name":"Document 4","values":[30,40,50,60,70]},
+... {"_id":"64c23350e32f4a51b19b9205","name":"Document 5","values":[25,35,45,55,65]},
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': '64c23350e32f4a51b19b9201',
+    '1': '64c23350e32f4a51b19b9202',
+    '2': '64c23350e32f4a51b19b9203',
+    '3': '64c23350e32f4a51b19b9204',
+    '4': '64c23350e32f4a51b19b9205'
+  }
+}
+shop> db.cols.find()
+[
+  {
+    _id: '64c23350e32f4a51b19b9201',
+    name: 'Document 1',
+    values: [ 10, 20, 30, 40, 50 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9202',
+    name: 'Document 2',
+    values: [ 15, 25, 35, 45, 55 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9203',
+    name: 'Document 3',
+    values: [ 5, 15, 25, 35, 45 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9204',
+    name: 'Document 4',
+    values: [ 30, 40, 50, 60, 70 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9205',
+    name: 'Document 5',
+    values: [ 25, 35, 45, 55, 65 ]
+  }
+]
+shop> db.cols.aggregate([{$project: {name: 1, showValue: {$filter: {input: '$values', as: 'val', cond: $gt: ['$$val', 30]}}}}])
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:100)
+
+> 1 | db.cols.aggregate([{$project: {name: 1, showValue: {$filter: {input: '$values', as: 'val', cond: $gt: ['$$val', 30]}}}}])
+    |
+                              ^
+  2 |
+
+shop> db.cols.aggregate([{$project: {name: 1, showValue: {$filter: {input: '$values', as: 'val', cond: {$gt: ['$$val', 30]}}}}}])
+[
+  {
+    _id: '64c23350e32f4a51b19b9201',
+    name: 'Document 1',
+    showValue: [ 40, 50 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9202',
+    name: 'Document 2',
+    showValue: [ 35, 45, 55 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9203',
+    name: 'Document 3',
+    showValue: [ 35, 45 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9204',
+    name: 'Document 4',
+    showValue: [ 40, 50, 60, 70 ]
+  },
+  {
+    _id: '64c23350e32f4a51b19b9205',
+    name: 'Document 5',
+    showValue: [ 35, 45, 55, 65 ]
+  }
+]
+shop>
+(To exit, press Ctrl+C again or Ctrl+D or type .exit)
 shop>
