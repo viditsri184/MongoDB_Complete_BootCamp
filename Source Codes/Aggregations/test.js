@@ -16,9 +16,9 @@ db.products.aggregate([
 ]);
 
 
-price > 900
-company $group
-sum price
+// price > 900
+// company $group
+// sum price
 
 db.produts.aggregate([
     {
@@ -79,21 +79,21 @@ db.products.aggregate([
     }
   ])
 
-  price: 1999,
-  colors: [ '#000000', '#cc6600', '#663300' ]
+  // price: 1999,
+  // colors: [ '#000000', '#cc6600', '#663300' ]
 
-  price: 1999,
-  colors: [ '#000000', '#cc6600', '#663300' ]
+  // price: 1999,
+  // colors: [ '#000000', '#cc6600', '#663300' ]
 
 
-  price: 1999,
-  colors: [
-    [ '#000000', '#cc6600', '#663300' ],
-    [ '#000000', '#cc6600', '#663300' ]
-  ]
-  ,
-  price: 1999,
-  colors: ['#000000', '#cc6600', '#663300']
+  // price: 1999,
+  // colors: [
+  //   [ '#000000', '#cc6600', '#663300' ],
+  //   [ '#000000', '#cc6600', '#663300' ]
+  // ]
+  // ,
+  // price: 1999,
+  // colors: ['#000000', '#cc6600', '#663300']
 
   db.products.aggregate([
     { $unwind: '$colors' },
